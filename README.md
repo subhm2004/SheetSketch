@@ -1,24 +1,69 @@
+<!-- HEADER: live badges from GitHub API + package.json -->
 <p align="center">
-  <strong>SheetSketch</strong><br />
-  <sub>Real-time collaborative whiteboard for teams that think in sketches, not slides.</sub>
+  <a href="https://github.com/subhm2004/SheetSketch">
+    <img
+      src="https://readme-typing-svg.demolab.com?font=Inter&weight=600&size=42&duration=3000&pause=1200&color=0EA5E9&center=true&vCenter=true&width=440&lines=SheetSketch"
+      alt="SheetSketch"
+    />
+  </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/subhm2004/SheetSketch"><img src="https://img.shields.io/github/stars/subhm2004/SheetSketch?style=flat-square&logo=github" alt="GitHub stars" /></a>
-  <a href="https://github.com/subhm2004/SheetSketch"><img src="https://img.shields.io/badge/SheetSketch-Open%20Source-181717?style=flat-square" alt="SheetSketch" /></a>
-  <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Liveblocks-Realtime-6957FF?style=flat-square" alt="Liveblocks" />
+  <strong>Real-time collaborative whiteboard</strong><br />
+  <sub>Hand-drawn canvas · Live cursors · Secure rooms · Chat · AI draw · PNG/SVG export</sub>
 </p>
 
 <p align="center">
-  <a href="#getting-started">Getting Started</a> ·
-  <a href="#capabilities">Capabilities</a> ·
-  <a href="#architecture">Architecture</a> ·
-  <a href="#configuration">Configuration</a> ·
-  <a href="#deployment">Deployment</a>
+  <a href="https://github.com/subhm2004/SheetSketch/stargazers">
+    <img src="https://img.shields.io/github/stars/subhm2004/SheetSketch?style=flat-square&logo=github&label=Stars&color=181717&logoColor=white" alt="GitHub stars" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch/network/members">
+    <img src="https://img.shields.io/github/forks/subhm2004/SheetSketch?style=flat-square&logo=github&label=Forks&color=181717&logoColor=white" alt="GitHub forks" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch/commits/main">
+    <img src="https://img.shields.io/github/last-commit/subhm2004/SheetSketch?style=flat-square&logo=git&label=Updated&color=181717&logoColor=white" alt="Last commit" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch">
+    <img src="https://img.shields.io/github/package-json/v/subhm2004/SheetSketch?style=flat-square&label=Release&color=0EA5E9" alt="Package version" />
+  </a>
 </p>
+
+<p align="center">
+  <a href="https://github.com/subhm2004/SheetSketch/blob/main/package.json">
+    <img src="https://img.shields.io/github/package-json/dependency-version/subhm2004/SheetSketch/next?style=flat-square&logo=next.js&label=Next.js&color=000000&logoColor=white" alt="Next.js version" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch/blob/main/package.json">
+    <img src="https://img.shields.io/github/package-json/dependency-version/subhm2004/SheetSketch/react?style=flat-square&logo=react&label=React&color=61DAFB&logoColor=black" alt="React version" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch/blob/main/package.json">
+    <img src="https://img.shields.io/github/package-json/dependency-version/subhm2004/SheetSketch/typescript?style=flat-square&logo=typescript&label=TypeScript&color=3178C6&logoColor=white" alt="TypeScript version" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch/blob/main/package.json">
+    <img src="https://img.shields.io/github/package-json/dependency-version/subhm2004/SheetSketch/%40liveblocks%2Fclient?style=flat-square&label=Liveblocks&color=6957FF&logoColor=white" alt="Liveblocks version" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch/blob/main/package.json">
+    <img src="https://img.shields.io/github/package-json/dependency-version/subhm2004/SheetSketch/roughjs?style=flat-square&label=Rough.js&color=F97316&logoColor=white" alt="Rough.js version" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="#getting-started">
+    <img src="https://img.shields.io/badge/Quick_Start-Local_Setup-22C55E?style=for-the-badge&logo=rocket&logoColor=white" alt="Quick start" />
+  </a>
+  <a href="https://github.com/subhm2004/SheetSketch">
+    <img src="https://img.shields.io/badge/View_Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="View on GitHub" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="#getting-started"><strong>Getting Started</strong></a> ·
+  <a href="#capabilities"><strong>Capabilities</strong></a> ·
+  <a href="#architecture"><strong>Architecture</strong></a> ·
+  <a href="#configuration"><strong>Configuration</strong></a> ·
+  <a href="#deployment"><strong>Deployment</strong></a>
+</p>
+
+<br />
 
 ---
 
