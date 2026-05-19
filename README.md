@@ -1,245 +1,201 @@
-<div align="center">
+<p align="center">
+  <strong>SheetSketch</strong><br />
+  <sub>Real-time collaborative whiteboard for teams that think in sketches, not slides.</sub>
+</p>
 
-# SheetSketch
+<p align="center">
+  <a href="https://github.com/subhm2004/SheetSketch"><img src="https://img.shields.io/github/stars/subhm2004/SheetSketch?style=flat-square&logo=github" alt="GitHub stars" /></a>
+  <a href="https://github.com/subhm2004/SheetSketch"><img src="https://img.shields.io/badge/SheetSketch-Open%20Source-181717?style=flat-square" alt="SheetSketch" /></a>
+  <img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Liveblocks-Realtime-6957FF?style=flat-square" alt="Liveblocks" />
+</p>
 
-### Collaborative whiteboard with a hand-drawn feel
+<p align="center">
+  <a href="#getting-started">Getting Started</a> ·
+  <a href="#capabilities">Capabilities</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#configuration">Configuration</a> ·
+  <a href="#deployment">Deployment</a>
+</p>
 
-Sketch together in real time — password-protected rooms, live cursors, room chat, AI diagrams, and PNG/SVG export.  
-No install. No signup. Just open the browser and draw.
+---
+
+## About
+
+**SheetSketch** is a production-grade collaborative drawing application built with Next.js and Liveblocks. It delivers an Excalidraw-style experience: hand-drawn shapes on an infinite canvas, multiplayer sync, secure rooms, and optional AI-assisted diagram generation.
+
+The project includes a full marketing landing page, authenticated room flows, guest invite links, in-room chat, PNG/SVG export, and light/dark theming — suitable for portfolio demos, team workshops, and as a reference implementation for realtime canvas apps.
+
+**Repository:** [github.com/subhm2004/SheetSketch](https://github.com/subhm2004/SheetSketch)
+
+---
+
+## Capabilities
+
+<details open>
+<summary><strong>Canvas & drawing</strong></summary>
 
 <br />
 
-[![GitHub Repo](https://img.shields.io/badge/GitHub-subhm2004%2FSheetSketch-181717?style=for-the-badge&logo=github)](https://github.com/subhm2004/SheetSketch)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Liveblocks](https://img.shields.io/badge/Liveblocks-Realtime-6957FF?style=for-the-badge)](https://liveblocks.io/)
-[![Rough.js](https://img.shields.io/badge/Rough.js-Hand--drawn-F97316?style=for-the-badge)](https://roughjs.com/)
+- Hand-drawn rendering via [Rough.js](https://roughjs.com/) — rectangles, ellipses, lines, arrows, freehand paths, and text
+- Infinite canvas with pan, zoom, and view reset
+- Property inspector for stroke, fill, roughness, and opacity
+- Selection tool with move, resize, and delete
+- Collaborative undo and redo
+
+</details>
+
+<details>
+<summary><strong>Realtime collaboration</strong></summary>
 
 <br />
 
-**[Live demo](#-quick-start)** · **[Features](#-features)** · **[How it works](#-how-it-works)** · **[Setup](#-quick-start)** · **[Deploy](#-deployment)**
+- Live cursors with participant names and colors
+- Presence avatars and active user count
+- Synchronized shape and chat state across clients
+- Optional visibility toggle for other users' cursors
+- In-room chat with unread indicator
+
+</details>
+
+<details>
+<summary><strong>Access & rooms</strong></summary>
 
 <br />
 
-```
-   Landing          Get Started           Room Canvas
- ┌──────────┐      ┌─────────────┐      ┌────────────────────────┐
- │  Hero    │  →   │ Create/Join │  →   │ Draw · Chat · AI · Export│
- │ Features │      │ Room + Pass │      │ Live cursors · Invite   │
- └──────────┘      └─────────────┘      └────────────────────────┘
-```
+- Password-protected rooms (ID + secret), stored with bcrypt hashing
+- JWT-based session after join (24-hour expiry)
+- Shareable invite links (7-day validity) for passwordless guest access
+- Stable guest identity per browser for presence and messaging
 
-</div>
+</details>
 
----
+<details>
+<summary><strong>Platform features</strong></summary>
 
-## Table of contents
+<br />
 
-- [Why SheetSketch?](#why-sheetsketch)
-- [Features](#-features)
-- [Screenshots](#-screenshots)
-- [How it works](#-how-it-works)
-- [Quick start](#-quick-start)
-- [Environment variables](#-environment-variables)
-- [Keyboard shortcuts](#-keyboard-shortcuts)
-- [Project structure](#-project-structure)
-- [Tech stack](#-tech-stack)
-- [Deployment](#-deployment)
-- [Security](#-security)
-- [Roadmap](#-roadmap)
-- [License](#-license)
+- AI diagram generation from natural language (OpenAI, with Groq fallback)
+- Export to **PNG** or **SVG** — full board or selected shape
+- Marketing site: features, how-to-use, FAQ, testimonials
+- Light and dark theme across landing and editor
+- Open-source link in navbar (`lib/site-config.ts`)
+
+</details>
 
 ---
 
-## Why SheetSketch?
-
-**SheetSketch** is a full-stack collaborative drawing app inspired by tools like Excalidraw. It is built for:
-
-- **Brainstorming** with your team in a private room  
-- **Wireframes** and quick diagrams without heavy design tools  
-- **Teaching** and whiteboarding in the browser  
-- **Remote collaboration** with cursors, chat, and instant sync  
-
-Unlike a static mockup, SheetSketch is a **real product**: rooms, auth, invites, realtime storage, optional AI, export, and a polished marketing landing page.
-
----
-
-## ✨ Features
-
-### Drawing & canvas
-
-| | Feature | What you get |
-|---|--------|----------------|
-| ✏️ | **Hand-drawn shapes** | Rectangles, ellipses, lines, arrows, freehand & text via [Rough.js](https://roughjs.com/) |
-| 🖱️ | **Infinite canvas** | Pan, zoom (+/−), reset view — never run out of space |
-| 🎛️ | **Properties panel** | Stroke, fill, roughness, opacity; edit selected shapes |
-| ↩️ | **Undo / redo** | Collaborative history (Liveblocks) |
-| 🧹 | **Eraser & select** | Move, resize, delete shapes |
-
-### Real-time collaboration
-
-| | Feature | What you get |
-|---|--------|----------------|
-| 👆 | **Live cursors** | Colored cursors + names; toggle others on/off |
-| 👥 | **Presence** | Avatars & online count in the room header |
-| 💬 | **Room chat** | Side panel + unread dot when chat is closed |
-| ⚡ | **Instant sync** | Shapes & messages sync across all clients |
-
-### Rooms & security
-
-| | Feature | What you get |
-|---|--------|----------------|
-| 🔐 | **Password rooms** | Room ID + password; bcrypt-hashed in Redis |
-| 🔗 | **Invite links** | 7-day guest links — join with name only |
-| 🎫 | **JWT sessions** | 24h room token after join |
-| 👤 | **Guest ID** | Stable per-browser identity for chat & presence |
-
-### Export & AI
-
-| | Feature | What you get |
-|---|--------|----------------|
-| 📥 | **Export PNG / SVG** | Download full board or selected shape from the room header |
-| 🤖 | **AI draw** | Describe a diagram → shapes appear on canvas (OpenAI or Groq) |
-
-### App experience
-
-| | Feature | What you get |
-|---|--------|----------------|
-| 🏠 | **Landing page** | Hero, features, how-to-use, discover, testimonials, FAQ |
-| 🌓 | **Light / Dark theme** | Toggle in navbar, canvas, and footer |
-| 📱 | **Responsive UI** | Toolbar, properties panel, mobile-friendly header |
-| ⭐ | **GitHub link** | Navbar button → [github.com/subhm2004/SheetSketch](https://github.com/subhm2004/SheetSketch) |
-
----
-
-## 📸 Screenshots
-
-> Add your own images under `/public/readme/` and uncomment the lines below.
-
-<!--
-| Landing | Room |
-|---------|------|
-| ![Landing](./public/readme/landing.png) | ![Room](./public/readme/room.png) |
--->
-
-**Suggested captures:** landing hero · room with shapes · live cursors · chat panel · export menu · AI draw
-
----
-
-## 🔄 How it works
+## Architecture
 
 ```mermaid
-flowchart TB
-  subgraph Browser
-    L[Landing Page]
-    G[Get Started]
-    R[Room Canvas]
+flowchart LR
+  subgraph Client
+    A[Landing]
+    B[Get Started]
+    C[Room Editor]
   end
 
-  subgraph Next.js API
-    API1["/api/rooms"]
-    API2["/api/liveblocks-auth"]
-    API3["/api/invite"]
-    API4["/api/ai-draw"]
+  subgraph API["Next.js API Routes"]
+    R["/api/rooms"]
+    L["/api/liveblocks-auth"]
+    I["/api/invite"]
+    D["/api/ai-draw"]
   end
 
-  subgraph External
+  subgraph Infrastructure
     Redis[(Upstash Redis)]
-    LB[Liveblocks Cloud]
+    LB[Liveblocks]
     AI[OpenAI / Groq]
   end
 
-  L --> G
-  G --> API1
-  API1 --> Redis
-  G --> R
-  R --> API2
-  API2 --> LB
-  R --> LB
-  R --> API3
-  API3 --> Redis
-  R --> API4
-  API4 --> AI
+  A --> B
+  B --> R --> Redis
+  B --> C
+  C --> L --> LB
+  C --> LB
+  C --> I --> Redis
+  C --> D --> AI
 ```
 
-| Step | What happens |
-|------|----------------|
-| **1** | User creates or joins a room → API checks password → returns JWT |
-| **2** | Client calls Liveblocks auth → session scoped to that `roomId` |
-| **3** | Drawing & chat write to Liveblocks storage → all clients update live |
-| **4** | Invite link lets guests skip password and join with display name only |
-| **5** | Export renders shapes off-screen → PNG or SVG download |
+| Stage | Description |
+|-------|-------------|
+| **Authentication** | User creates or joins a room; credentials validated against Redis; JWT issued to client |
+| **Realtime session** | Liveblocks auth endpoint maps JWT to a room-scoped session |
+| **Collaboration** | Canvas and chat mutations persist in Liveblocks storage and broadcast to peers |
+| **Guests** | Invite tokens resolve to room access without sharing the room password |
+| **Export** | Shapes rendered to an off-screen canvas and downloaded as PNG or SVG |
 
 ---
 
-## 🚀 Quick start
+## Getting Started
 
 ### Prerequisites
 
-| Requirement | Notes |
-|-------------|--------|
-| **Node.js 18+** | 20+ recommended |
-| **Liveblocks** | Free tier — [liveblocks.io](https://liveblocks.io) |
-| **Upstash Redis** | Free tier — [upstash.com](https://upstash.com) |
-| **OpenAI or Groq** | Optional — only for AI draw |
+- Node.js 18 or later (20 recommended)
+- [Liveblocks](https://liveblocks.io) account (free tier)
+- [Upstash Redis](https://upstash.com) database (free tier)
+- OpenAI or Groq API key *(optional, for AI draw only)*
 
-### 1. Clone the repository
+### Installation
 
 ```bash
 git clone https://github.com/subhm2004/SheetSketch.git
 cd SheetSketch
 npm install
-```
-
-### 2. Configure environment
-
-```bash
 cp .env.example .env.local
 ```
 
-Open `.env.local` and fill in the values (see table below).
-
-### 3. Start development server
+Configure `.env.local` using the [configuration reference](#configuration) below, then start the development server:
 
 ```bash
 npm run dev
 ```
 
-Open **http://localhost:3000**
+Application URL: **http://localhost:3000**
 
-### 4. Test collaboration
+### Verify multiplayer
 
-1. Click **Get Started** → create a room (`my-team` / `secret123`)
-2. Open **another browser or incognito** → join same room
-3. Draw together — watch **live cursors** move
-4. Open **Chat**, copy an **Invite** link, try **AI draw**, **Export PNG**
+1. Navigate to **Get Started** and create a room (e.g. `design-review` / `your-password`).
+2. Open an incognito window, join the same room.
+3. Confirm live cursors, shape sync, chat, invite link, and export from the room header.
 
 ---
 
-## 🔑 Environment variables
+## Configuration
 
 | Variable | Required | Description |
 |----------|:--------:|-------------|
-| `LIVEBLOCKS_SECRET_KEY` | ✅ | Liveblocks secret key (`sk_live_...`) from dashboard |
-| `UPSTASH_REDIS_REST_URL` | ✅ | Upstash Redis REST URL |
-| `UPSTASH_REDIS_REST_TOKEN` | ✅ | Upstash Redis REST token |
-| `JWT_SECRET` | ✅ | Random secret — e.g. `openssl rand -base64 32` |
-| `OPEN_AI_API_KEY` | ⬜ | OpenAI API key for AI draw |
-| `GROQ_API_KEY` | ⬜ | Free fallback when OpenAI has no quota |
+| `LIVEBLOCKS_SECRET_KEY` | Yes | Secret key from the Liveblocks dashboard (`sk_live_…`) |
+| `UPSTASH_REDIS_REST_URL` | Yes | Upstash Redis REST endpoint |
+| `UPSTASH_REDIS_REST_TOKEN` | Yes | Upstash Redis REST token |
+| `JWT_SECRET` | Yes | Signing secret for room JWTs (`openssl rand -base64 32`) |
+| `OPEN_AI_API_KEY` | No | OpenAI API key for AI draw |
+| `GROQ_API_KEY` | No | Groq API key when OpenAI quota is unavailable |
 
-> **Important:** ChatGPT Plus is **not** the same as OpenAI API billing. Add credits at [platform.openai.com/settings/billing](https://platform.openai.com/settings/billing) if AI draw returns quota errors.
+> OpenAI API billing is separate from ChatGPT Plus. Enable billing at [platform.openai.com/settings/billing](https://platform.openai.com/settings/billing) if requests fail with quota errors.
 
-**GitHub URL** for the navbar button is set in `lib/site-config.ts` — no env variable needed.
+The public GitHub URL shown in the application navbar is configured in `lib/site-config.ts` and does not require an environment variable.
 
 ---
 
-## ⌨️ Keyboard shortcuts
+## Development
 
-In the room canvas (when not typing in a text field):
+### Scripts
 
-| Key | Tool |
-|-----|------|
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Start the development server (Turbopack) |
+| `npm run build` | Create an optimized production build |
+| `npm run start` | Serve the production build |
+
+### Keyboard shortcuts
+
+Available in the room editor when focus is not inside a text field:
+
+| Key | Action |
+|-----|--------|
 | `V` | Select |
 | `R` | Rectangle |
 | `C` | Ellipse |
@@ -248,124 +204,90 @@ In the room canvas (when not typing in a text field):
 | `P` | Freehand |
 | `T` | Text |
 | `E` | Eraser |
+| `Space` + drag | Pan canvas |
 
-Hold **Space** + drag to pan the canvas.
-
----
-
-## 📁 Project structure
+### Project layout
 
 ```
-SheetSketch/
-├── app/
-│   ├── page.tsx                    # Landing (hero, features, FAQ, …)
-│   ├── get-started/                # Create / join room
-│   ├── room/[roomId]/              # Main whiteboard
-│   ├── invite/[token]/             # Guest invite flow
-│   └── api/
-│       ├── rooms/                  # Create & join
-│       ├── liveblocks-auth/        # Liveblocks session
-│       ├── invite/                 # Invite tokens
-│       └── ai-draw/                # AI shape generation
-├── components/
-│   ├── Canvas.tsx                  # Room shell (header, export, chat, AI)
-│   ├── CanvasCore.tsx              # Drawing engine + canvas
-│   ├── ExportMenu.tsx              # PNG / SVG export
-│   ├── RoomChat.tsx                # Real-time chat
-│   ├── RoomAI.tsx                  # AI draw panel
-│   ├── LiveCursors.tsx             # Multiplayer cursors
-│   ├── ThemeToggle.tsx             # Light / dark
-│   └── landing/                    # Marketing sections
-├── lib/
-│   ├── liveblocks.ts               # Client & room config
-│   ├── types.ts                    # Shapes, tools, presence
-│   ├── rough-renderer.ts           # Rough.js rendering
-│   ├── canvas-export.ts            # PNG & SVG export
-│   ├── ai-shapes.ts                # AI prompts & parsing
-│   └── site-config.ts              # GitHub URL (navbar)
-└── hooks/                          # Cursors, chat unread, canvas events
+app/
+  page.tsx                 Landing page
+  get-started/             Room creation and join
+  room/[roomId]/           Collaborative editor
+  invite/[token]/          Guest invite flow
+  api/                     REST endpoints (rooms, auth, AI, invites)
+
+components/
+  Canvas.tsx               Editor shell and header actions
+  CanvasCore.tsx           Canvas rendering and input
+  ExportMenu.tsx           PNG / SVG export UI
+  RoomChat.tsx             Realtime chat panel
+  RoomAI.tsx               AI draw interface
+  LiveCursors.tsx          Multiplayer cursor overlay
+  landing/                 Marketing page sections
+
+lib/
+  liveblocks.ts            Realtime client configuration
+  rough-renderer.ts        Shape rendering (Rough.js)
+  canvas-export.ts         Export pipeline
+  ai-shapes.ts             AI prompt and response parsing
+  types.ts                 Domain types
+  site-config.ts           Application URLs (GitHub)
+
+hooks/                     Canvas events, presence, chat state
 ```
 
 ---
 
-## 🏗 Tech stack
+## Deployment
 
-| Layer | Technology |
-|-------|------------|
-| **Framework** | [Next.js 16](https://nextjs.org/) — App Router, Turbopack |
-| **UI** | React 19, Tailwind CSS 4, Framer Motion |
-| **Drawing** | Rough.js + HTML Canvas |
-| **Realtime** | [Liveblocks](https://liveblocks.io/) — presence, storage, broadcast |
-| **Database** | [Upstash Redis](https://upstash.com/) — rooms & invites |
-| **Auth** | JWT + bcrypt |
-| **AI** | OpenAI API (+ optional Groq fallback) |
+SheetSketch targets **Vercel** or any Node.js host compatible with Next.js 16.
+
+1. Push the repository to GitHub.
+2. Import the project into your hosting provider.
+3. Set all required environment variables from `.env.example`.
+4. Deploy and verify Liveblocks and Upstash allow traffic from your production domain.
 
 ---
 
-## 🛠 Scripts
+## Security
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Development server (http://localhost:3000) |
-| `npm run build` | Production build |
-| `npm run start` | Run production server |
-
----
-
-## 🌐 Deployment
-
-Deploy on **[Vercel](https://vercel.com)** (recommended), Railway, or any Node host supporting Next.js 16.
-
-1. Push code to [github.com/subhm2004/SheetSketch](https://github.com/subhm2004/SheetSketch)
-2. Import project on Vercel
-3. Add all **required** env vars from `.env.example`
-4. Deploy
-
-Allow your production domain in Liveblocks & Upstash if you use access restrictions.
+- Environment files (`.env`, `.env.local`) must not be committed.
+- Room passwords are hashed with bcrypt before storage.
+- JWTs expire after 24 hours; invite tokens after 7 days.
+- The Liveblocks auth handler validates that the JWT room identifier matches the requested room.
 
 ---
 
-## 🔒 Security
+## Roadmap
 
-- Never commit `.env` or `.env.local` — they are gitignored  
-- Room passwords are **bcrypt-hashed** in Redis  
-- JWTs expire after **24 hours**  
-- Invite tokens expire after **7 days**  
-- Liveblocks auth verifies JWT `roomId` matches the requested room  
-
----
-
-## 🗺 Roadmap
-
-- [x] Real-time drawing & cursors  
-- [x] Room chat & invite links  
-- [x] AI draw (OpenAI + Groq)  
-- [x] Export PNG / SVG  
-- [x] Landing page + light/dark theme  
-- [ ] Export to JSON / restore sessions  
-- [ ] Keyboard shortcuts help modal  
-- [ ] Mobile touch improvements  
-- [ ] Room templates (flowchart, retro, wireframe)  
+| Status | Item |
+|--------|------|
+| Done | Realtime canvas, cursors, and presence |
+| Done | Room chat and invite links |
+| Done | AI draw with provider fallback |
+| Done | PNG and SVG export |
+| Done | Landing page and theme system |
+| Planned | JSON export and session restore |
+| Planned | In-app keyboard shortcut reference |
+| Planned | Enhanced mobile touch support |
+| Planned | Room templates (flowchart, retro, wireframe) |
 
 ---
 
-## 📄 License
+## Acknowledgments
 
-This project is for **learning and portfolio use**.  
-Excalidraw is a separate product — SheetSketch is an independent implementation inspired by the collaborative whiteboard category.
+- [Rough.js](https://roughjs.com/) — hand-drawn graphics
+- [Liveblocks](https://liveblocks.io/) — realtime infrastructure
+- [Excalidraw](https://excalidraw.com/) — inspiration for the whiteboard category (independent implementation)
 
 ---
 
-<div align="center">
+## License
 
-**SheetSketch** — sketch together, ship faster
+This project is intended for **education and portfolio demonstration**. SheetSketch is not affiliated with Excalidraw.
 
-<br />
+---
 
-[![Star on GitHub](https://img.shields.io/github/stars/subhm2004/SheetSketch?style=social)](https://github.com/subhm2004/SheetSketch)
-
-Made with care by **[subhm2004](https://github.com/subhm2004)**
-
-[⬆ Back to top](#sheetsketch)
-
-</div>
+<p align="center">
+  <sub>Built by <a href="https://github.com/subhm2004">subhm2004</a></sub>
+</p>
