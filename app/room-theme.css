@@ -1,0 +1,364 @@
+/* Room editor + get-started — theme-aware surfaces (scoped to .room-layout) */
+
+.room-layout {
+  --sk-header-bg: rgba(15, 15, 26, 0.92);
+  --sk-header-border: rgba(255, 255, 255, 0.08);
+  --sk-header-text: #f4f4f5;
+  --sk-header-btn-bg: rgba(255, 255, 255, 0.06);
+  --sk-header-btn-border: rgba(255, 255, 255, 0.12);
+  --sk-header-btn-text: #e4e4e7;
+  --sk-header-divider: rgba(255, 255, 255, 0.12);
+
+  --sk-toolbar-bg: rgba(35, 35, 54, 0.92);
+  --sk-toolbar-border: rgba(255, 255, 255, 0.08);
+  --sk-toolbar-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --sk-tool-color: #a1a1b5;
+  --sk-tool-hover-bg: rgba(105, 101, 219, 0.2);
+
+  --sk-canvas-bg: #1b1b2e;
+  --sk-canvas-dot: #3a3a5c;
+
+  --sk-panel-bg: rgba(35, 35, 54, 0.95);
+  --sk-panel-border: rgba(255, 255, 255, 0.1);
+  --sk-panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --sk-prop-label: #8888aa;
+  --sk-prop-input-bg: rgba(27, 27, 46, 0.8);
+  --sk-prop-input-border: var(--border);
+  --sk-prop-input-text: var(--text);
+  --sk-swatch-border: var(--border);
+
+  --sk-zoom-bg: rgba(35, 35, 54, 0.92);
+  --sk-zoom-border: rgba(255, 255, 255, 0.1);
+  --sk-zoom-text: var(--text);
+
+  --sk-chat-bg: rgba(35, 35, 54, 0.98);
+  --sk-chat-text: var(--text);
+  --sk-chat-border: rgba(255, 255, 255, 0.08);
+  --sk-chat-header-border: rgba(255, 255, 255, 0.06);
+  --sk-chat-bubble: rgba(42, 42, 66, 0.9);
+  --sk-chat-input-bg: rgba(27, 27, 46, 0.9);
+  --sk-chat-input-border: var(--border);
+
+  --sk-export-bg: rgba(35, 35, 54, 0.98);
+  --sk-export-border: rgba(255, 255, 255, 0.12);
+  --sk-export-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --sk-export-hint: #8888aa;
+  --sk-export-hint-border: rgba(255, 255, 255, 0.08);
+  --sk-export-text: #e8e8f0;
+  --sk-export-item-hover: rgba(124, 58, 237, 0.2);
+  --sk-export-icon-bg: rgba(255, 255, 255, 0.06);
+  --sk-export-icon-color: #c4b5fd;
+}
+
+html:not(.dark) .room-layout {
+  --sk-header-bg: rgba(255, 255, 255, 0.88);
+  --sk-header-border: rgba(0, 0, 0, 0.06);
+  --sk-header-text: #18181b;
+  --sk-header-btn-bg: rgba(105, 101, 219, 0.06);
+  --sk-header-btn-border: rgba(105, 101, 219, 0.18);
+  --sk-header-btn-text: #3f3f5c;
+  --sk-header-divider: rgba(0, 0, 0, 0.08);
+
+  --sk-toolbar-bg: rgba(255, 255, 255, 0.95);
+  --sk-toolbar-border: rgba(0, 0, 0, 0.06);
+  --sk-toolbar-shadow: 0 8px 32px rgba(105, 101, 219, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  --sk-tool-color: #6a6a8a;
+  --sk-tool-hover-bg: #f0eefa;
+
+  --sk-canvas-bg: #f5f3ef;
+  --sk-canvas-dot: #ccc8be;
+
+  --sk-panel-bg: rgba(255, 255, 255, 0.98);
+  --sk-panel-border: #e8e4de;
+  --sk-panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --sk-prop-label: #9090b0;
+  --sk-prop-input-bg: #fff;
+  --sk-prop-input-border: #e8e4de;
+  --sk-prop-input-text: #1b1b2e;
+  --sk-swatch-border: #d8d4cd;
+
+  --sk-zoom-bg: rgba(255, 255, 255, 0.95);
+  --sk-zoom-border: rgba(0, 0, 0, 0.08);
+  --sk-zoom-text: #3f3f5c;
+
+  --sk-chat-bg: rgba(255, 255, 255, 0.98);
+  --sk-chat-text: #18181b;
+  --sk-chat-border: rgba(0, 0, 0, 0.08);
+  --sk-chat-header-border: #f0ece6;
+  --sk-chat-bubble: #f5f3ef;
+  --sk-chat-input-bg: #ffffff;
+  --sk-chat-input-border: #e8e4de;
+
+  --sk-export-bg: rgba(255, 255, 255, 0.98);
+  --sk-export-border: rgba(0, 0, 0, 0.08);
+  --sk-export-shadow: 0 12px 40px rgba(105, 101, 219, 0.15), 0 4px 16px rgba(0, 0, 0, 0.06);
+  --sk-export-hint: #6b6b8a;
+  --sk-export-hint-border: rgba(0, 0, 0, 0.06);
+  --sk-export-text: #1a1a2e;
+  --sk-export-item-hover: rgba(105, 101, 219, 0.1);
+  --sk-export-icon-bg: rgba(105, 101, 219, 0.08);
+  --sk-export-icon-color: #6965db;
+}
+
+/* Light tokens for landing card + get-started when not dark */
+html:not(.dark) .room-layout,
+html:not(.dark) .landing,
+html:not(.dark) .get-started-page,
+html:not(.dark) .landing-page .landing-card {
+  --bg:           #f4f6fc;
+  --bg-panel:     #ffffff;
+  --bg-elevated:  #eef0f8;
+  --bg-hover:     #e4e8f4;
+  --border:       #d8dce8;
+  --border-light: #c4cad8;
+  --text:         #1a1a2e;
+  --text-muted:   #6b6b8a;
+  --accent-glow:  rgba(105, 101, 219, 0.2);
+  --shadow:       0 8px 40px rgba(105, 101, 219, 0.12);
+  --shadow-sm:    0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Room overrides using sk-* vars */
+.room-header {
+  background: var(--sk-header-bg) !important;
+  border-bottom-color: var(--sk-header-border) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.room-name {
+  color: var(--sk-header-text) !important;
+}
+
+.room-header-divider {
+  background: var(--sk-header-divider) !important;
+}
+
+.header-action-btn:not(.active) {
+  background: var(--sk-header-btn-bg) !important;
+  border-color: var(--sk-header-btn-border) !important;
+  color: var(--sk-header-btn-text) !important;
+  box-shadow: none !important;
+}
+
+.header-action-btn:hover:not(.active) {
+  background: rgba(124, 58, 237, 0.15) !important;
+  border-color: rgba(124, 58, 237, 0.35) !important;
+  color: #7c3aed !important;
+}
+
+html.dark .header-action-btn:hover:not(.active) {
+  background: rgba(124, 58, 237, 0.25) !important;
+  border-color: rgba(167, 139, 250, 0.45) !important;
+  color: #e9d5ff !important;
+}
+
+.header-action-btn.active,
+.header-action-btn.active.chat-toggle-btn {
+  background: linear-gradient(135deg, #7c3aed, #6366f1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 2px 14px rgba(124, 58, 237, 0.55) !important;
+}
+
+.header-action-btn.active .btn-label,
+.header-action-btn.active svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.room-layout .theme-toggle {
+  border-color: var(--sk-header-btn-border) !important;
+  background: var(--sk-header-btn-bg) !important;
+  box-shadow: none !important;
+}
+
+html:not(.dark) .room-layout .theme-toggle button:not([aria-pressed='true']) {
+  color: var(--sk-header-btn-text) !important;
+}
+
+html:not(.dark) .room-layout .theme-toggle button[aria-pressed='true'] {
+  background: #fff !important;
+  color: #18181b !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+.toolbar {
+  background: var(--sk-toolbar-bg) !important;
+  border-color: var(--sk-toolbar-border) !important;
+  box-shadow: var(--sk-toolbar-shadow) !important;
+}
+
+.tool-btn:not(.active) {
+  color: var(--sk-tool-color) !important;
+}
+
+.tool-btn:hover:not(.active) {
+  background: var(--sk-tool-hover-bg) !important;
+  color: #7c3aed !important;
+}
+
+html.dark .tool-btn:hover:not(.active) {
+  color: #c4b5fd !important;
+}
+
+.tool-btn.active {
+  background: linear-gradient(145deg, #7c3aed, #6366f1) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.5) !important;
+  transform: none !important;
+}
+
+.tool-btn.active svg {
+  stroke: #ffffff !important;
+}
+
+.tool-btn.active .tool-key {
+  color: #ffffff !important;
+  opacity: 0.92 !important;
+}
+
+.canvas-wrapper {
+  background-color: var(--sk-canvas-bg) !important;
+  background-image: radial-gradient(circle, var(--sk-canvas-dot) 1px, transparent 1px) !important;
+}
+
+.props-panel {
+  background: var(--sk-panel-bg) !important;
+  border-color: var(--sk-panel-border) !important;
+  box-shadow: var(--sk-panel-shadow) !important;
+}
+
+.prop-label {
+  color: var(--sk-prop-label) !important;
+}
+
+.prop-text-input {
+  background: var(--sk-prop-input-bg) !important;
+  border-color: var(--sk-prop-input-border) !important;
+  color: var(--sk-prop-input-text) !important;
+}
+
+.color-swatch {
+  border-color: var(--sk-swatch-border) !important;
+}
+
+.fill-style-btn {
+  border-color: var(--sk-swatch-border) !important;
+  color: var(--sk-tool-color) !important;
+}
+.fill-style-btn:hover {
+  background: var(--sk-tool-hover-bg) !important;
+}
+
+html.dark .fill-style-btn:hover {
+  color: var(--accent) !important;
+}
+
+.zoom-indicator {
+  background: var(--sk-zoom-bg) !important;
+  border-color: var(--sk-zoom-border) !important;
+  color: var(--sk-zoom-text) !important;
+}
+
+.room-chat,
+.room-ai {
+  background: var(--sk-chat-bg) !important;
+  color: var(--sk-chat-text) !important;
+  border-color: var(--sk-chat-border) !important;
+  color-scheme: light;
+}
+html.dark .room-chat,
+html.dark .room-ai {
+  color-scheme: dark;
+}
+
+.room-ai-header {
+  border-bottom-color: var(--sk-chat-header-border) !important;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(99, 102, 241, 0.08)) !important;
+}
+.room-ai-header h2 {
+  color: var(--accent) !important;
+}
+.room-ai-hint {
+  color: var(--sk-prop-label) !important;
+}
+.room-ai-input {
+  background-color: var(--sk-chat-input-bg) !important;
+  border-color: var(--sk-chat-input-border) !important;
+  color: var(--sk-chat-text) !important;
+}
+.room-ai-chip {
+  background: var(--sk-tool-hover-bg) !important;
+  border-color: var(--sk-chat-border) !important;
+  color: var(--accent) !important;
+}
+.room-ai-form {
+  border-top-color: var(--sk-chat-header-border) !important;
+}
+.room-ai-close {
+  color: var(--sk-prop-label) !important;
+}
+.room-ai-close:hover {
+  background: var(--sk-tool-hover-bg) !important;
+  color: var(--sk-chat-text) !important;
+}
+
+.room-chat-header {
+  border-bottom-color: var(--sk-chat-header-border) !important;
+}
+.room-chat-header h2 {
+  color: var(--sk-chat-text) !important;
+}
+
+.chat-bubble-text {
+  background: var(--sk-chat-bubble) !important;
+  color: var(--sk-chat-text) !important;
+}
+
+.room-chat-form {
+  border-top-color: var(--sk-chat-header-border) !important;
+}
+.room-chat-form input {
+  background-color: var(--sk-chat-input-bg) !important;
+  border-color: var(--sk-chat-input-border) !important;
+  color: var(--sk-chat-text) !important;
+  -webkit-text-fill-color: var(--sk-chat-text) !important;
+  caret-color: var(--sk-chat-text) !important;
+}
+
+.room-chat-close {
+  color: var(--sk-prop-label) !important;
+}
+.room-chat-close:hover {
+  background: var(--sk-tool-hover-bg) !important;
+  color: var(--sk-chat-text) !important;
+}
+
+.room-header {
+  position: relative;
+}
+.room-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.6), rgba(99, 102, 241, 0.6), transparent);
+  pointer-events: none;
+}
+
+.loading-screen {
+  background: var(--bg, #0a0a12) !important;
+  color: var(--text-muted, #a1a1aa) !important;
+}
+
+html:not(.dark) .zoom-indicator button:hover {
+  background: var(--sk-tool-hover-bg) !important;
+}
+html.dark .zoom-indicator button:hover {
+  background: var(--sk-tool-hover-bg) !important;
+  color: var(--accent) !important;
+}
