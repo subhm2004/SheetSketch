@@ -277,7 +277,7 @@ export function useCanvasEvents({
       const currentSelectedId = selectedIdRef.current;
       const currentStyle = styleRef.current;
 
-      const spaceHeld = e.getModifierState('Space') || spaceDown.current;
+      const spaceHeld = spaceDown.current;
       if (spaceHeld) {
         drag.current = { type: 'pan', startX: sx, startY: sy, lastX: sx, lastY: sy };
         isPanning.current = true;
