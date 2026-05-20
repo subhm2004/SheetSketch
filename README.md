@@ -59,6 +59,7 @@
   <a href="#getting-started"><strong>Getting Started</strong></a> ·
   <a href="#capabilities"><strong>Capabilities</strong></a> ·
   <a href="#architecture"><strong>Architecture</strong></a> ·
+  <a href="#sequence-diagrams"><strong>Sequence Diagrams</strong></a> ·
   <a href="#configuration"><strong>Configuration</strong></a> ·
   <a href="#deployment"><strong>Deployment</strong></a>
 </p>
@@ -134,43 +135,211 @@ The project includes a full marketing landing page, authenticated room flows, gu
 
 ## Architecture
 
+High-level view of how the browser, Next.js API routes, and external services connect.
+
 ```mermaid
-flowchart LR
-  subgraph Client
-    A[Landing]
-    B[Get Started]
-    C[Room Editor]
+flowchart TB
+  subgraph Client["Browser"]
+    L[Landing Page]
+    G[Get Started]
+    R[Room Editor]
   end
 
-  subgraph API["Next.js API Routes"]
-    R["/api/rooms"]
-    L["/api/liveblocks-auth"]
-    I["/api/invite"]
-    D["/api/ai-draw"]
+  subgraph API["Next.js API"]
+    AR["/api/rooms"]
+    AL["/api/liveblocks-auth"]
+    AI["/api/invite/*"]
+    AD["/api/ai-draw"]
   end
 
-  subgraph Infrastructure
+  subgraph Services["External Services"]
     Redis[(Upstash Redis)]
-    LB[Liveblocks]
-    AI[OpenAI / Groq]
+    LB[Liveblocks Cloud]
+    LLM[OpenAI / Groq]
   end
 
-  A --> B
-  B --> R --> Redis
-  B --> C
-  C --> L --> LB
-  C --> LB
-  C --> I --> Redis
-  C --> D --> AI
+  L --> G
+  G --> AR --> Redis
+  G --> R
+  R --> AL --> LB
+  R <-->|storage + presence| LB
+  R --> AI --> Redis
+  R --> AD --> LLM
 ```
 
-| Stage | Description |
-|-------|-------------|
-| **Authentication** | User creates or joins a room; credentials validated against Redis; JWT issued to client |
-| **Realtime session** | Liveblocks auth endpoint maps JWT to a room-scoped session |
-| **Collaboration** | Canvas and chat mutations persist in Liveblocks storage and broadcast to peers |
-| **Guests** | Invite tokens resolve to room access without sharing the room password |
-| **Export** | Shapes rendered to an off-screen canvas and downloaded as PNG or SVG |
+| Component | Role |
+|-----------|------|
+| **Upstash Redis** | Stores room passwords (bcrypt), invite tokens (7-day TTL) |
+| **Liveblocks** | Realtime shapes, chat messages, cursors, presence |
+| **JWT** | Room access token in `sessionStorage` (24h expiry) |
+| **OpenAI / Groq** | Optional AI shape generation from text prompts |
+
+---
+
+## Sequence Diagrams
+
+End-to-end flows for the main user journeys in SheetSketch.
+
+### 1. Create or join a room
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor User
+  participant UI as Get Started UI
+  participant API as Next.js API
+  participant Redis as Upstash Redis
+
+  alt Create new room
+    User->>UI: Enter roomId + password
+    UI->>API: POST /api/rooms
+    API->>Redis: Check room:{id} exists
+    Redis-->>API: Not found
+    API->>API: bcrypt.hash(password)
+    API->>Redis: SET room:{id}
+    API->>API: Sign JWT (room_access)
+    API-->>UI: { token }
+  else Join existing room
+    User->>UI: Enter roomId + password
+    UI->>API: POST /api/rooms/{id}/join
+    API->>Redis: GET room:{id}
+    Redis-->>API: { hashedPassword }
+    API->>API: bcrypt.compare(password)
+    API->>API: Sign JWT (room_access)
+    API-->>UI: { token }
+  end
+
+  UI->>UI: sessionStorage.setItem(room_token)
+  UI->>User: Redirect /room/{roomId}
+```
+
+### 2. Connect to Liveblocks (enter room)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor User
+  participant App as Room Client
+  participant Auth as /api/liveblocks-auth
+  participant LB as Liveblocks
+
+  User->>App: Open /room/{roomId}
+  App->>App: Read JWT from sessionStorage
+  App->>LB: Connect RoomProvider
+  LB->>Auth: POST { room, token, userId, userName }
+  Auth->>Auth: Verify JWT matches roomId
+  Auth->>Auth: prepareSession + allow(room:write)
+  Auth-->>LB: Liveblocks session token
+  LB-->>App: Connected
+  App->>LB: Subscribe storage (shapes, messages)
+  App->>LB: Broadcast presence (cursor)
+  App-->>User: Canvas ready
+```
+
+### 3. Real-time collaboration
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor UserA as User A
+  actor UserB as User B
+  participant CA as Client A
+  participant CB as Client B
+  participant LB as Liveblocks Storage
+
+  UserA->>CA: Draw rectangle
+  CA->>LB: Mutation — push shape to storage
+  LB-->>CB: Storage update event
+  CB-->>UserB: Canvas re-renders shape
+
+  UserA->>CA: Move cursor
+  CA->>LB: Update presence
+  LB-->>CB: Presence event
+  CB-->>UserB: Live cursor overlay
+
+  UserB->>CB: Send chat message
+  CB->>LB: Append to messages storage
+  LB-->>CA: Storage update event
+  CA-->>UserA: Chat panel updates
+```
+
+### 4. Invite guest to room
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor Host
+  actor Guest
+  participant Room as Room UI
+  participant API as Next.js API
+  participant Redis as Upstash Redis
+
+  Host->>Room: Click Invite
+  Room->>API: POST /api/rooms/{id}/invite (Bearer JWT)
+  API->>API: Verify host JWT
+  API->>Redis: SET invite:{token} TTL 7d
+  API-->>Room: { inviteUrl }
+  Room-->>Host: Copy link
+
+  Guest->>Guest: Open /invite/{token}
+  Guest->>API: GET /api/invite/{token}
+  API->>Redis: GET invite:{token}
+  Redis-->>API: { roomId }
+  API-->>Guest: Show join form
+
+  Guest->>API: POST /api/invite/{token}/join { password }
+  API->>Redis: Validate invite + room password
+  API->>API: Sign JWT (room_access)
+  API-->>Guest: { token, roomId }
+  Guest->>Guest: sessionStorage + display name
+  Guest->>Guest: Redirect /room/{roomId}
+```
+
+### 5. AI draw on canvas
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor User
+  participant UI as Room AI Panel
+  participant API as /api/ai-draw
+  participant LLM as OpenAI / Groq
+  participant LB as Liveblocks
+
+  User->>UI: Enter prompt (e.g. login flowchart)
+  UI->>UI: Compute visible canvas bounds
+  UI->>API: POST { prompt, bounds }
+  API->>LLM: System prompt + user request
+  LLM-->>API: JSON { shapes, message }
+  API->>API: Parse & validate shapes
+  API-->>UI: { shapes, message }
+  UI->>LB: addShapes mutation
+  LB-->>UI: Storage synced
+  UI-->>User: Shapes appear on canvas
+```
+
+### 6. Export PNG / SVG
+
+```mermaid
+sequenceDiagram
+  autonumber
+  actor User
+  participant UI as Export Menu
+  participant Export as canvas-export.ts
+  participant Canvas as Off-screen Canvas
+
+  User->>UI: Click Export → PNG or SVG
+  UI->>Export: shapesForExport(all or selection)
+  Export->>Export: getExportBounds(shapes)
+  Export->>Canvas: renderShapes (Rough.js)
+  alt PNG
+    Canvas->>Canvas: toBlob(image/png)
+    Export-->>User: Download .png file
+  else SVG
+    Export->>Export: buildSvgDocument(shapes)
+    Export-->>User: Download .svg file
+  end
+```
 
 ---
 
