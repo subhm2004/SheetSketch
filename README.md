@@ -10,7 +10,7 @@
 
 <p align="center">
   <strong>Real-time collaborative whiteboard</strong><br />
-  <sub>Hand-drawn canvas · Live cursors · Secure rooms · Chat · AI draw · PNG/SVG export</sub>
+  <sub>Hand-drawn canvas · Live cursors · Laser pointer · Copy/paste · Chat · AI draw · PNG/SVG export</sub>
 </p>
 
 <p align="center">
@@ -58,6 +58,7 @@
 <p align="center">
   <a href="#getting-started"><strong>Getting Started</strong></a> ·
   <a href="#capabilities"><strong>Capabilities</strong></a> ·
+  <a href="#keyboard-shortcuts"><strong>Shortcuts</strong></a> ·
   <a href="#architecture"><strong>Architecture</strong></a> ·
   <a href="#sequence-diagrams"><strong>Sequence Diagrams</strong></a> ·
   <a href="#configuration"><strong>Configuration</strong></a> ·
@@ -70,9 +71,9 @@
 
 ## About
 
-**SheetSketch** is a production-grade collaborative drawing application built with Next.js and Liveblocks. It delivers an Excalidraw-style experience: hand-drawn shapes on an infinite canvas, multiplayer sync, secure rooms, and optional AI-assisted diagram generation.
+**SheetSketch** is a production-grade collaborative drawing application built with Next.js and Liveblocks. It delivers an Excalidraw-style experience: hand-drawn shapes on an infinite canvas, multiplayer sync, secure password-protected rooms, and optional AI-assisted diagram generation.
 
-The project includes a full marketing landing page, authenticated room flows, guest invite links, in-room chat, PNG/SVG export, and light/dark theming — suitable for portfolio demos, team workshops, and as a reference implementation for realtime canvas apps.
+The editor supports **live cursors**, a collaborative **laser pointer**, **copy / paste / duplicate** for shapes, flexible **text boxes**, in-room **chat**, **invite links**, **PNG/SVG export**, and light/dark theming — suitable for portfolio demos, team workshops, and as a reference implementation for realtime canvas apps.
 
 **Repository:** [github.com/subhm2004/SheetSketch](https://github.com/subhm2004/SheetSketch)
 
@@ -87,9 +88,24 @@ The project includes a full marketing landing page, authenticated room flows, gu
 
 - Hand-drawn rendering via [Rough.js](https://roughjs.com/) — rectangles, ellipses, lines, arrows, freehand paths, and text
 - Infinite canvas with pan, zoom, and view reset
-- Property inspector for stroke, fill, roughness, and opacity
+- Property inspector for stroke, fill, roughness, opacity, and font size
 - Selection tool with move, resize, and delete
 - Collaborative undo and redo
+- **Copy / paste / duplicate** — select a shape, then `Ctrl/Cmd+C`, `Ctrl/Cmd+V`, or `Ctrl/Cmd+D`
+- **Text boxes** — press `T` to add text at the center of the view; **double-click** empty canvas for a new box; **double-click** existing text to edit
+
+</details>
+
+<details>
+<summary><strong>Laser pointer (presentation mode)</strong></summary>
+
+<br />
+
+- Toggle from the **Laser** button below the left toolbar (shortcut **`K`**)
+- Press **`Esc`** to turn the laser off
+- Each participant gets a **colored laser trail** synced in realtime (uses their presence color)
+- While laser mode is active, the default cursor is hidden on the canvas and trails render on a dedicated overlay
+- Ideal for presentations, walkthroughs, and pointing during reviews
 
 </details>
 
@@ -99,10 +115,11 @@ The project includes a full marketing landing page, authenticated room flows, gu
 <br />
 
 - Live cursors with participant names and colors
-- Presence avatars and active user count
+- Laser trails broadcast via Liveblocks presence (`laserTrail`, `pointerMode`)
+- Presence avatars and active user count in the room header
 - Synchronized shape and chat state across clients
-- Optional visibility toggle for other users' cursors
-- In-room chat with unread indicator
+- Toggle to show or hide **other users' cursors** (your cursor can still be shown)
+- In-room chat with unread indicator when the panel is closed
 
 </details>
 
@@ -111,10 +128,11 @@ The project includes a full marketing landing page, authenticated room flows, gu
 
 <br />
 
-- Password-protected rooms (ID + secret), stored with bcrypt hashing
-- JWT-based session after join (24-hour expiry)
-- Shareable invite links (7-day validity) for passwordless guest access
-- Stable guest identity per browser for presence and messaging
+- Password-protected rooms (room ID + password), stored with bcrypt hashing in Redis
+- JWT-based session after join (`room_access`, 24-hour expiry) in `sessionStorage`
+- **Invite links** — host clicks **Invite** in the room header; link is copied to the clipboard (7-day TTL in Redis)
+- Guests open `/invite/{token}`, enter **name + room password**, then join the board
+- Stable guest identity per browser (`guest_id`) for presence and chat
 
 </details>
 
@@ -124,7 +142,7 @@ The project includes a full marketing landing page, authenticated room flows, gu
 <br />
 
 - AI diagram generation from natural language (OpenAI, with Groq fallback)
-- Export to **PNG** or **SVG** — full board or selected shape
+- Export to **PNG** or **SVG** — full board or selected shape only
 - Marketing site: features, how-to-use, FAQ, testimonials
 - Light and dark theme across landing and editor
 - Open-source link in navbar (`lib/site-config.ts`)
@@ -170,7 +188,7 @@ flowchart TB
 | Component | Role |
 |-----------|------|
 | **Upstash Redis** | Stores room passwords (bcrypt), invite tokens (7-day TTL) |
-| **Liveblocks** | Realtime shapes, chat messages, cursors, presence |
+| **Liveblocks** | Realtime shapes, chat messages, cursors, laser trails, presence |
 | **JWT** | Room access token in `sessionStorage` (24h expiry) |
 | **OpenAI / Groq** | Optional AI shape generation from text prompts |
 
@@ -232,7 +250,7 @@ sequenceDiagram
   Auth-->>LB: Liveblocks session token
   LB-->>App: Connected
   App->>LB: Subscribe storage (shapes, messages)
-  App->>LB: Broadcast presence (cursor)
+  App->>LB: Broadcast presence (cursor, optional laser)
   App-->>User: Canvas ready
 ```
 
@@ -253,9 +271,14 @@ sequenceDiagram
   CB-->>UserB: Canvas re-renders shape
 
   UserA->>CA: Move cursor
-  CA->>LB: Update presence
+  CA->>LB: Update presence (cursor)
   LB-->>CB: Presence event
   CB-->>UserB: Live cursor overlay
+
+  UserA->>CA: Enable laser (K)
+  CA->>LB: Update presence (pointerMode, laserTrail)
+  LB-->>CB: Presence event
+  CB-->>UserB: Laser trail overlay
 
   UserB->>CB: Send chat message
   CB->>LB: Append to messages storage
@@ -287,8 +310,8 @@ sequenceDiagram
   Redis-->>API: { roomId }
   API-->>Guest: Show join form
 
-  Guest->>API: POST /api/invite/{token}/join { password }
-  API->>Redis: Validate invite + room password
+  Guest->>API: POST /api/invite/{token}/join { name, password }
+  API->>Redis: GET invite + verify room password (bcrypt)
   API->>API: Sign JWT (room_access)
   API-->>Guest: { token, roomId }
   Guest->>Guest: sessionStorage + display name
@@ -373,7 +396,7 @@ Application URL: **http://localhost:3000**
 
 1. Navigate to **Get Started** and create a room (e.g. `design-review` / `your-password`).
 2. Open an incognito window, join the same room.
-3. Confirm live cursors, shape sync, chat, invite link, and export from the room header.
+3. Confirm live cursors, shape sync, laser pointer (`K`), text (`T` / double-click), copy/paste (`Ctrl/Cmd+C/V`), chat, invite link, and export from the room header.
 
 ---
 
@@ -406,19 +429,51 @@ The public GitHub URL shown in the application navbar is configured in `lib/site
 
 ### Keyboard shortcuts
 
-Available in the room editor when focus is not inside a text field:
+<a id="keyboard-shortcuts"></a>
+
+Available in the room editor when focus is not inside an input or the text box (except where noted).
+
+#### Tools
 
 | Key | Action |
 |-----|--------|
-| `V` | Select |
+| `V` | Select tool |
 | `R` | Rectangle |
 | `C` | Ellipse |
 | `L` | Line |
 | `A` | Arrow |
-| `P` | Freehand |
-| `T` | Text |
+| `P` | Freehand (pencil) |
 | `E` | Eraser |
+| `T` | Open text box at center of current view |
 | `Space` + drag | Pan canvas |
+| Scroll / `Ctrl`+scroll | Zoom in and out |
+
+#### Presentation
+
+| Key | Action |
+|-----|--------|
+| `K` | Toggle laser pointer on / off |
+| `Esc` | Turn laser pointer off |
+
+#### Edit (shape must be selected)
+
+| Key | Action |
+|-----|--------|
+| `Ctrl/Cmd + C` | Copy selected shape |
+| `Ctrl/Cmd + V` | Paste copied shape |
+| `Ctrl/Cmd + D` | Duplicate selected shape |
+| `Delete` / `Backspace` | Delete selected shape |
+| `Esc` | Clear selection (when not editing text) |
+
+#### Text
+
+| Action | Result |
+|--------|--------|
+| `T` | New text box at viewport center |
+| Double-click empty canvas (select tool) | New text box at click position |
+| Double-click existing text | Edit that text box |
+| `Enter` | Commit text (while editing) |
+| `Esc` | Cancel text edit |
 
 ### Project layout
 
@@ -431,23 +486,35 @@ app/
   api/                     REST endpoints (rooms, auth, AI, invites)
 
 components/
-  Canvas.tsx               Editor shell and header actions
-  CanvasCore.tsx           Canvas rendering and input
+  Canvas.tsx               Editor shell, header, laser + tools layout
+  CanvasCore.tsx           Canvas rendering, text overlay, pointer events
   ExportMenu.tsx           PNG / SVG export UI
+  InviteButton.tsx         One-click invite link copy
+  PresentationBar.tsx      Laser pointer toggle (toolbar)
+  AppleLaserLayer.tsx      Collaborative laser trail overlay
   RoomChat.tsx             Realtime chat panel
   RoomAI.tsx               AI draw interface
   LiveCursors.tsx          Multiplayer cursor overlay
+  Toolbar.tsx              Drawing tools (left sidebar)
   landing/                 Marketing page sections
 
 lib/
   liveblocks.ts            Realtime client configuration
   rough-renderer.ts        Shape rendering (Rough.js)
   canvas-export.ts         Export pipeline
+  shape-clipboard.ts       Copy/paste offset helpers
+  laser-pointer.ts         Laser trail point buffer
+  apple-laser-draw.ts      Laser trail canvas drawing
+  color-utils.ts           Presence color helpers for laser
   ai-shapes.ts             AI prompt and response parsing
-  types.ts                 Domain types
+  types.ts                 Shapes, tools, presence types
   site-config.ts           Application URLs (GitHub)
 
-hooks/                     Canvas events, presence, chat state
+hooks/
+  useCanvasEvents.ts       Mouse, keyboard, draw, select, erase
+  useRoomPresence.ts       Cursor + laser presence sync
+  useShapeClipboard.ts     Copy, paste, duplicate mutations
+  useChatUnread.ts         Chat unread badge state
 ```
 
 ---
@@ -477,12 +544,16 @@ SheetSketch targets **Vercel** or any Node.js host compatible with Next.js 16.
 | Status | Item |
 |--------|------|
 | Done | Realtime canvas, cursors, and presence |
-| Done | Room chat and invite links |
+| Done | Room chat and invite links (password required on join) |
 | Done | AI draw with provider fallback |
 | Done | PNG and SVG export |
 | Done | Landing page and theme system |
+| Done | Copy, paste, and duplicate shapes |
+| Done | Collaborative laser pointer (`K` / toolbar) |
+| Done | Text boxes (`T`, double-click create / edit) |
 | Planned | JSON export and session restore |
-| Planned | In-app keyboard shortcut reference |
+| Planned | In-app keyboard shortcut panel (`?`) |
+| Planned | View-only vs editor invite roles |
 | Planned | Enhanced mobile touch support |
 | Planned | Room templates (flowchart, retro, wireframe) |
 
