@@ -314,10 +314,7 @@ body:has(.room-layout) {
 
 /* ─── Toolbar ────────────────────────────────────────────────── */
 .toolbar {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -586,6 +583,38 @@ html.dark .canvas-wrapper {
 html.dark .canvas-text-input {
   background: #232336;
   color: #e8e8f0;
+}
+
+.editor-tools-column {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.presentation-laser-btn.active {
+  background: linear-gradient(145deg, #dc2626, #ef4444);
+  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.45);
+}
+
+.laser-trails-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.canvas-wrapper--laser .canvas-core-layer canvas {
+  cursor: none;
+}
+
+.canvas-wrapper--laser .live-cursors-layer {
+  pointer-events: none;
 }
 
 /* ─── Header right: buttons + avatars in one row ─────────────── */

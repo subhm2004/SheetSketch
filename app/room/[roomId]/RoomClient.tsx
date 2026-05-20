@@ -37,7 +37,13 @@ export default function RoomClient({ roomId }: { roomId: string }) {
   return (
     <RoomProvider
       id={roomId}
-      initialPresence={{ cursor: null, name: userName, color: userColor }}
+      initialPresence={{
+        cursor: null,
+        name: userName,
+        color: userColor,
+        pointerMode: 'off',
+        laserTrail: null,
+      }}
       initialStorage={{
         shapes: new LiveList<LiveObject<Shape>>([]),
         messages: new LiveList<LiveObject<ChatMessage>>([]),

@@ -72,18 +72,6 @@ const tools: { id: Tool; label: string; shortcut: string; icon: ReactElement }[]
     ),
   },
   {
-    id: 'text',
-    label: 'Text',
-    shortcut: 'T',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 7V4h16v3" />
-        <path d="M9 20h6" />
-        <path d="M12 4v16" />
-      </svg>
-    ),
-  },
-  {
     id: 'eraser',
     label: 'Eraser',
     shortcut: 'E',

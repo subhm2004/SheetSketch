@@ -5,7 +5,7 @@ import rough from 'roughjs';
 import { Shape, Tool, Viewport, FillStyle, DEFAULT_SHAPE_STYLE } from '@/lib/types';
 import { renderShapes, renderSelectionOverlay } from '@/lib/rough-renderer';
 import { useCanvasEvents } from '@/hooks/useCanvasEvents';
-import { canvasToScreen } from '@/lib/canvas-utils';
+import { canvasToScreen, screenToCanvas } from '@/lib/canvas-utils';
 
 type StyleState = {
   strokeColor: string;
@@ -136,13 +136,19 @@ export default function CanvasCore({
     setTextEdit(null);
   }, []);
 
+  const focusTextInput = useCallback(() => {
+    requestAnimationFrame(() => {
+      const el = textInputRef.current;
+      if (!el) return;
+      el.focus();
+      const len = el.value.length;
+      el.setSelectionRange(len, len);
+    });
+  }, []);
+
   useEffect(() => {
-    if (textEdit && textInputRef.current) {
-      textInputRef.current.focus();
-      const len = textEdit.value.length;
-      textInputRef.current.setSelectionRange(len, len);
-    }
-  }, [textEdit]);
+    if (textEdit) focusTextInput();
+  }, [textEdit, focusTextInput]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -244,7 +250,8 @@ export default function CanvasCore({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (textEditRef.current) {
+      const tag = document.activeElement?.tagName;
+      if (tag === 'TEXTAREA' && textEditRef.current) {
         if (e.key === 'Escape') {
           e.preventDefault();
           cancelTextEdit();
@@ -252,10 +259,16 @@ export default function CanvasCore({
         return;
       }
 
-      if (
-        document.activeElement?.tagName === 'INPUT' ||
-        document.activeElement?.tagName === 'TEXTAREA'
-      ) {
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+      if (e.key.toLowerCase() === 't' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const rect = canvas.getBoundingClientRect();
+          const { x, y } = screenToCanvas(rect.width / 2, rect.height / 2, viewportRef.current);
+          openTextEditor({ x, y });
+        }
         return;
       }
 
@@ -266,7 +279,6 @@ export default function CanvasCore({
         l: 'line',
         a: 'arrow',
         p: 'freehand',
-        t: 'text',
         e: 'eraser',
       };
       if (map[e.key.toLowerCase()]) setTool(map[e.key.toLowerCase()]);
@@ -278,7 +290,7 @@ export default function CanvasCore({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
-  }, [onKeyDown, onKeyUp, setTool, cancelTextEdit]);
+  }, [onKeyDown, onKeyUp, setTool, cancelTextEdit, openTextEditor]);
 
   const getCursor = () => {
     if (textEdit) return 'text';
@@ -290,7 +302,7 @@ export default function CanvasCore({
 
   const handleCanvasMouseDown = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (textEditRef.current) {
+      if (textEditRef.current && e.target === e.currentTarget) {
         commitTextEdit();
         isTextEditingRef.current = false;
       }
@@ -350,7 +362,6 @@ export default function CanvasCore({
             minHeight: fontSize * 1.4,
           }}
           placeholder="Type here…"
-          autoFocus
         />
       )}
       {children}

@@ -114,6 +114,7 @@ export default function LiveCursors({ viewport, width, height, showOthers }: Pro
     const byUser = new Map<string, CursorUser>();
     for (const other of others) {
       if (other.id === me?.id) continue;
+      if (other.presence.pointerMode === 'laser') continue;
       const cursor = other.presence.cursor;
       if (!cursor) continue;
       byUser.set(other.id, {
@@ -127,7 +128,7 @@ export default function LiveCursors({ viewport, width, height, showOthers }: Pro
   });
 
   const selfCursor: CursorUser | null =
-    me?.presence.cursor != null
+    me?.presence.pointerMode !== 'laser' && me?.presence.cursor != null
       ? {
           id: me.id,
           cursor: me.presence.cursor,

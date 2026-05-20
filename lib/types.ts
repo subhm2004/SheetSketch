@@ -47,10 +47,16 @@ export type Viewport = {
   zoom: number;
 };
 
+export type PresentationPointer = 'off' | 'laser';
+
+export type LaserTrailPoint = { x: number; y: number; t: number };
+
 export type Presence = {
   cursor: { x: number; y: number } | null;
   name: string;
   color: string;
+  pointerMode?: PresentationPointer;
+  laserTrail?: LaserTrailPoint[] | null;
 };
 
 export type ChatMessage = {

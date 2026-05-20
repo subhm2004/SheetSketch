@@ -402,6 +402,8 @@ export function useCanvasEvents({
           return;
         }
       }
+
+      onRequestTextEdit?.({ x: cx, y: cy });
     },
     [canvasPointFromClient, onRequestTextEdit],
   );

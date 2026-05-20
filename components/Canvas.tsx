@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { LiveObject } from '@liveblocks/client';
 import { useStorage, useMutation } from '@/lib/liveblocks';
-import { Shape, Tool, Viewport, FillStyle, DEFAULT_SHAPE_STYLE } from '@/lib/types';
-import { useLiveCursorPresence } from '@/hooks/useLiveCursorPresence';
+import { Shape, Tool, Viewport, FillStyle, DEFAULT_SHAPE_STYLE, PresentationPointer } from '@/lib/types';
+import { useRoomPresence } from '@/hooks/useRoomPresence';
 import { useChatUnread } from '@/hooks/useChatUnread';
 import { useShapeClipboard } from '@/hooks/useShapeClipboard';
 import CanvasCore from './CanvasCore';
@@ -16,6 +16,8 @@ import RoomChat from './RoomChat';
 import RoomAI from './RoomAI';
 import InviteButton from './InviteButton';
 import ExportMenu from './ExportMenu';
+import PresentationBar from './PresentationBar';
+import AppleLaserLayer from './AppleLaserLayer';
 import { ThemeToggle } from './ThemeToggle';
 
 type StyleState = {
@@ -41,6 +43,7 @@ export default function Canvas({ roomId }: Props) {
   const chatHasUnread = useChatUnread(chatOpen);
   const [aiOpen, setAiOpen] = useState(false);
   const [showOthersCursors, setShowOthersCursors] = useState(true);
+  const [presentationPointer, setPresentationPointer] = useState<PresentationPointer>('off');
 
   useEffect(() => {
     const stored = sessionStorage.getItem('show_others_cursors');
@@ -67,7 +70,24 @@ export default function Canvas({ roomId }: Props) {
     return () => ro.disconnect();
   }, []);
 
-  useLiveCursorPresence({ wrapperRef, viewport });
+  useRoomPresence({ wrapperRef, viewport, pointerMode: presentationPointer });
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA'
+      ) {
+        return;
+      }
+      if (e.key === 'Escape') setPresentationPointer('off');
+      if (e.key === 'k' || e.key === 'K') {
+        setPresentationPointer((m) => (m === 'laser' ? 'off' : 'laser'));
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const shapes = useStorage((root) => root.shapes.map((s) => ({ ...s }))) ?? [];
 
@@ -189,11 +209,15 @@ export default function Canvas({ roomId }: Props) {
       </header>
 
       <div className="editor-body">
-        {/* Left toolbar */}
-        <Toolbar tool={tool} onToolChange={setTool} />
+        <div className="editor-tools-column">
+          <Toolbar tool={tool} onToolChange={setTool} />
+          <PresentationBar mode={presentationPointer} onModeChange={setPresentationPointer} />
+        </div>
 
-        {/* Canvas */}
-        <div ref={wrapperRef} className="canvas-wrapper">
+        <div
+          ref={wrapperRef}
+          className={`canvas-wrapper${presentationPointer === 'laser' ? ' canvas-wrapper--laser' : ''}`}
+        >
           <CanvasCore
             shapes={shapes}
             selectedId={selectedId}
@@ -211,6 +235,7 @@ export default function Canvas({ roomId }: Props) {
             style={style}
             setStyle={(patch) => setStyle((s) => ({ ...s, ...patch }))}
           />
+          <AppleLaserLayer viewport={viewport} width={wrapperSize.w} height={wrapperSize.h} />
           <LiveCursors
             viewport={viewport}
             width={wrapperSize.w}
