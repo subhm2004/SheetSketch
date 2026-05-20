@@ -6,6 +6,7 @@ import { useStorage, useMutation } from '@/lib/liveblocks';
 import { Shape, Tool, Viewport, FillStyle, DEFAULT_SHAPE_STYLE } from '@/lib/types';
 import { useLiveCursorPresence } from '@/hooks/useLiveCursorPresence';
 import { useChatUnread } from '@/hooks/useChatUnread';
+import { useShapeClipboard } from '@/hooks/useShapeClipboard';
 import CanvasCore from './CanvasCore';
 import LiveCursors from './LiveCursors';
 import Presence from './Presence';
@@ -102,6 +103,12 @@ export default function Canvas({ roomId }: Props) {
   }, []);
 
   const selectedShape = shapes.find((s) => s.id === selectedId) ?? null;
+  const { copySelected, pasteClipboard, duplicateSelected } = useShapeClipboard({
+    shapes,
+    selectedId,
+    setSelectedId,
+    onAddShape: addShape,
+  });
   const zoomPercent = Math.round(viewport.zoom * 100);
 
   const getDrawBounds = () => {
@@ -194,6 +201,9 @@ export default function Canvas({ roomId }: Props) {
             onAddShape={addShape}
             onUpdateShape={updateShape}
             onDeleteShape={deleteShape}
+            onCopy={copySelected}
+            onPaste={pasteClipboard}
+            onDuplicate={duplicateSelected}
             viewport={viewport}
             setViewport={setViewport}
             tool={tool}

@@ -36,6 +36,9 @@ type UseCanvasEventsProps = {
   onAddShape: (shape: Shape) => void;
   onUpdateShape: (id: string, patch: Partial<Shape>) => void;
   onDeleteShape: (id: string) => void;
+  onCopy?: () => void;
+  onPaste?: () => void;
+  onDuplicate?: () => void;
   onToolChange: (tool: Tool) => void;
   isTextEditingRef?: React.MutableRefObject<boolean>;
   onRequestTextEdit?: (payload: {
@@ -61,6 +64,9 @@ export function useCanvasEvents({
   onAddShape,
   onUpdateShape,
   onDeleteShape,
+  onCopy,
+  onPaste,
+  onDuplicate,
   onToolChange,
   isTextEditingRef,
   onRequestTextEdit,
@@ -434,6 +440,24 @@ export function useCanvasEvents({
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.code === 'Space') spaceDown.current = true;
+
+      const mod = e.metaKey || e.ctrlKey;
+      if (mod && e.key === 'c') {
+        e.preventDefault();
+        onCopy?.();
+        return;
+      }
+      if (mod && e.key === 'v') {
+        e.preventDefault();
+        onPaste?.();
+        return;
+      }
+      if (mod && e.key === 'd') {
+        e.preventDefault();
+        onDuplicate?.();
+        return;
+      }
+
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (selectedIdRef.current && document.activeElement?.tagName !== 'INPUT') {
           onDeleteShape(selectedIdRef.current);
@@ -442,7 +466,7 @@ export function useCanvasEvents({
       }
       if (e.key === 'Escape') setSelectedId(null);
     },
-    [onDeleteShape, setSelectedId],
+    [onCopy, onDeleteShape, onDuplicate, onPaste, setSelectedId],
   );
 
   const onKeyUp = useCallback((e: KeyboardEvent) => {

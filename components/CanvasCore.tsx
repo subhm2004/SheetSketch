@@ -33,6 +33,9 @@ type Props = {
   onAddShape: (s: Shape) => void;
   onUpdateShape: (id: string, patch: Partial<Shape>) => void;
   onDeleteShape: (id: string) => void;
+  onCopy?: () => void;
+  onPaste?: () => void;
+  onDuplicate?: () => void;
   viewport: Viewport;
   setViewport: (vp: Viewport | ((prev: Viewport) => Viewport)) => void;
   tool: Tool;
@@ -49,6 +52,9 @@ export default function CanvasCore({
   onAddShape,
   onUpdateShape,
   onDeleteShape,
+  onCopy,
+  onPaste,
+  onDuplicate,
   viewport,
   setViewport,
   tool,
@@ -214,6 +220,9 @@ export default function CanvasCore({
     onAddShape,
     onUpdateShape,
     onDeleteShape,
+    onCopy,
+    onPaste,
+    onDuplicate,
     onToolChange: setTool,
     isTextEditingRef,
     onRequestTextEdit: openTextEditor,

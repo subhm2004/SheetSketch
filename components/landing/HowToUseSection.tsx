@@ -55,6 +55,7 @@ const STEPS = [
 
 const TIPS = [
   { icon: MousePointer2, text: 'Select tool → click shapes to move or resize' },
+  { icon: Sparkles, text: 'Copy, paste, duplicate: ⌘/Ctrl+C, V, D on a selected shape' },
   { icon: Sparkles, text: 'AI Draw works best with clear prompts (e.g. “login flowchart”)' },
 ];
 
